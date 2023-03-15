@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contacts Fetcher</title>
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+#fetchContactsBtn {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#contactsList {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+#contactsList li {
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+    </style>
+  </head>
+  <body>
+    <h1>Contacts Fetcher</h1>
+    <button id="fetchContactsBtn">Fetch Contacts</button>
+    <ul id="contactsList"></ul>
+    <script>
+        var fetchContactsBtn = document.getElementById("fetchContactsBtn");
+var contactsList = document.getElementById("contactsList");
+
+fetchContactsBtn.addEventListener("click", function () {
+  navigator.contacts.requestPermission(function () {
+    console.log("Contacts access granted.");
+    var options = new ContactFindOptions();
+    options.filter = "";
+    options.multiple = true;
+    options.desiredFields = [
+      navigator.contacts.fieldType.displayName,
+      navigator.contacts.fieldType.phoneNumbers,
+      navigator.contacts.fieldType.emails,
+    ];
+
+    navigator.contacts.find(
+      ["*"],
+      function (contacts) {
+        contactsList.innerHTML = "";
+        for (var i = 0; i < contacts.length; i++) {
+          var contact = contacts[i];
+          var displayName = contact.displayName;
+          var phoneNumbers = contact.phoneNumbers;
+          var emails = contact.emails;
+
+          var listItem = document.createElement("li");
+          var itemText =
+            "<strong>" +
+            displayName +
+            "</strong><br>" +
+            "<i>Phone:</i> " +
+            phoneNumbers[0].value +
+            "<br>" +
+            "<i>Email:</i> " +
+            emails[0].value;
+          listItem.innerHTML = itemText;
+          contactsList.appendChild(listItem);
+        }
+      },
+      function (error) {
+        console.error("Contacts fetch error: " + error);
+      },
+      options
+    );
+  }, function (err) {
+    console.error("Contacts access denied: " + err);
+  });
+});
+
+    </script>
+  </body>
+  
+</html>
+
+
+
+
